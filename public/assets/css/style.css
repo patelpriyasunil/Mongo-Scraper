@@ -1,0 +1,31 @@
+body {
+    padding-top: 70px;
+}
+
+.deleteNote {
+	display: inline-block;
+}
+
+.savedNotes {
+    display: inline-block;
+    width: 90%
+}
+
+#scrape {
+    margin: 8px 0px;
+}
+#navBr {
+    background-color: blue;
+}
+
+.navbar-brand, #save, #home{
+    color:white;
+}
+
+#Jumbo {
+    background-color: orange;
+}
+#svbtn, #ntbtn, #dltbtn {
+    float: right;
+
+}
