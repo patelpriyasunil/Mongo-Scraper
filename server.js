@@ -10,6 +10,8 @@ var cheerio = require("cheerio");
 // Requiring Note and Article models
 var Note = require("./models/Note.js");
 var Article = require("./models/Article.js");
+// var db = require("./models");
+
 
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
@@ -43,18 +45,17 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/Headlines";
 // Database configuration with mongoose
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
-var db = mongoose.connection;
 
 
 // Show any mongoose errors
-db.on("error", function(error) {
-  console.log("Mongoose Error: ", error);
-});
+// db.on("error", function(error) {
+//   console.log("Mongoose Error: ", error);
+// });
 
-// Once logged in to the db through mongoose, log a success message
-db.once("open", function() {
-  console.log("Mongoose connection successful.");
-});
+// // Once logged in to the db through mongoose, log a success message
+// db.once("open", function() {
+//   console.log("Mongoose connection successful.");
+// });
 
 // Routes
 // ======
@@ -82,7 +83,7 @@ app.get("/saved", function(req, res) {
 // A GET axios to scrape the echojs website
 app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with axios
-  axios.get("http://www.nytimes.com/").then(function(response) {
+  axios.get("http://www.echojs.com/").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
 
@@ -93,24 +94,33 @@ app.get("/scrape", function(req, res) {
 
       // // Add the title and summary of every link, and save them as properties of the result object
       result.title = $(this).children("a").text();
-      result.summary = $(this).children(".summary").text();
-      result.link = $(this).children("a").children("a").attr("href");
-
+      // result.summary = $(this).children(".summary").text();
+      result.link = $(this).children("a").attr("href");
+// console.log (result);
 
       // Using our Article model, create a new entry
       // This effectively passes the result object to the entry (and the title and link)
-      var entry = new Article(result);
+      // var entry = new Article(result);
 
-      // Now, save that entry to the db
-      entry.save(function(err, doc) {
-        // Log any errors
-        if (err) {
-          console.log(err);
-        }
-        // Or log the doc
-        else {
-          console.log(doc);
-        }
+      // // Now, save that entry to the db
+      // entry.save(result) 
+      //   // Log any errors
+      //   if (err) {
+      //     // console.log(err);
+      //   }
+      //   // Or log the doc
+      //   else {
+      //     // console.log(doc);
+      //   }
+      // });
+      Article.create(result)
+      .then(function(dbArticle) {
+        // View the added result in the console
+        console.log(dbArticle);
+      })
+      .catch(function(err) {
+        // If an error occurred, log it
+        console.log(err);
       });
 
     });
